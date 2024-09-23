@@ -1,4 +1,4 @@
-import subprocess, re
+import subprocess, re, os
 from collections import defaultdict
 from subdomains import Subdomains
 
@@ -10,7 +10,7 @@ class Fuzz(Subdomains):
     def fuzzSubdomain(self, wordlist):
         word_set = set()
         for subdomain in self.subdomains:
-            fuzzer = subdomain + "/FUZZ"
+            fuzzer = os.path.join(subdomain, "FUZZ")
             # result = subprocess.run(["ffuf", "-w", wordlist, "-u", fuzzer, "-mc", "all", "-fc", "403"],
             #                         shell=False, text=True, capture_output=True)
             result = subprocess.run(["ffuf", "-w", wordlist, "-u", fuzzer],
@@ -18,7 +18,7 @@ class Fuzz(Subdomains):
             self.checkFuzz(result.stdout, word_set, subdomain)
         
     def checkFuzz(self, result, word_set, subdomain):
-        for line in result.split("/n"):
+        for line in result.split("\n"):
                 words_pattern = re.search(r'Words:\s*(\d+)', line)
                 if words_pattern:
                     words = words_pattern.group(1)
@@ -26,7 +26,7 @@ class Fuzz(Subdomains):
                     continue
                 if words not in word_set:
                     word_set.add(words)
-                    self.fuzz_output[subdomain[0]].append(line)
+                    self.fuzz_output[subdomain].append(line)
 
 
 if __name__ == '__main__':

@@ -1,5 +1,4 @@
-import subprocess, re
-
+import subprocess, re, sys
 class Subdomains():
     def __init__(self, url) -> None:
         self.unfiltured_subdomains = []
@@ -9,9 +8,9 @@ class Subdomains():
         self.subdomainsDetails()
     
     def subdomainsList(self):
-        subprocess.run(["python3", "../FinalRecon/finalrecon.py", "--sub", "--url", self.url, "-cd", './assets/', "-of", "subdomains"],
+        subprocess.run(["python3", "../../FinalRecon/finalrecon.py", "--sub", "--url", self.url, "-cd", "./assets/", "-of", "subdomains"],
                        capture_output=True, text=True)
-        with open("subdomains/subdomains.txt", 'r') as txt:
+        with open("./assets/subdomains/subdomains.txt", 'r') as txt:
             subd = txt.readlines()
             self.unfiltured_subdomains = subd
             
